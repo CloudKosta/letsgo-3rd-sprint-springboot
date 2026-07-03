@@ -379,6 +379,27 @@
           AND (m.user_id = #{userId} OR s.shared_user_id = #{userId})
     </select>
 
+    <select id="hasWriteSchedulePermission" parameterType="map" resultType="int">
+        SELECT COUNT(m.my_schedule_id)
+        FROM my_schedule m
+        LEFT JOIN schedule_share_user s ON m.my_schedule_id = s.my_schedule_id
+        WHERE m.my_schedule_id = #{scheduleId}
+          AND (m.user_id = #{userId} OR (s.shared_user_id = #{userId} AND s.permission = 'W'))
+    </select>
+
+    <select id="getSchedulePermission" parameterType="map" resultType="String">
+        SELECT CASE
+                   WHEN m.user_id = #{userId} THEN 'OWNER'
+                   ELSE s.permission
+               END
+        FROM my_schedule m
+        LEFT JOIN schedule_share_user s
+               ON m.my_schedule_id = s.my_schedule_id AND s.shared_user_id = #{userId}
+        WHERE m.my_schedule_id = #{scheduleId}
+          AND (m.user_id = #{userId} OR s.shared_user_id = #{userId})
+        LIMIT 1
+    </select>
+
     <select id="listMyScheduleIdAndTitle" parameterType="String"
             resultType="com.travel.letsgospringboot.myschedule.vo.ScheduleSummaryVO">
         SELECT my_schedule_id AS myScheduleId, title

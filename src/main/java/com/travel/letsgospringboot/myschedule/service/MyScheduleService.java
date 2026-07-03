@@ -122,8 +122,8 @@ public class MyScheduleService {
     public boolean setMyScheduleTitle(ScheduleTitleUpdateVO scheduleTitleUpdateVO) {
         String scheduleId = scheduleTitleUpdateVO.getScheduleId();
         String userId = scheduleTitleUpdateVO.getUserId();
-        if(!isScheduleOwnedByUser(scheduleId, userId))
-            throw new AccessDeniedException("권한이 없습니다");
+        if(!hasWriteSchedulePermission(scheduleId, userId))
+            throw new AccessDeniedException("편집 권한이 없습니다");
         boolean result = myScheduleRepository.setMyScheduleTitle(scheduleTitleUpdateVO);
         log.info("일정 제목 수정 - scheduleId={}, userId={}", scheduleId, userId);
         return result;
@@ -132,8 +132,8 @@ public class MyScheduleService {
     public boolean setTodoDetail(TodoUpdateVO todoUpdateVO) {
         String scheduleId = todoUpdateVO.getScheduleId();
         String userId = todoUpdateVO.getUserId();
-        if(!isScheduleOwnedByUser(scheduleId, userId))
-            throw new AccessDeniedException("권한이 없습니다");
+        if(!hasWriteSchedulePermission(scheduleId, userId))
+            throw new AccessDeniedException("편집 권한이 없습니다");
         boolean result = myScheduleRepository.setTodoDetail(scheduleId, todoUpdateVO.getTodoDetail());
         log.info("일정 할일 수정 - scheduleId={}, userId={}", scheduleId, userId);
         return result;
@@ -154,8 +154,8 @@ public class MyScheduleService {
     public boolean setBudgetDetail(BudgetUpdateVO budgetUpdateVO) {
         String scheduleId = budgetUpdateVO.getScheduleId();
         String userId = budgetUpdateVO.getUserId();
-        if(!isScheduleOwnedByUser(scheduleId, userId))
-            throw new AccessDeniedException("권한이 없습니다");
+        if(!hasWriteSchedulePermission(scheduleId, userId))
+            throw new AccessDeniedException("편집 권한이 없습니다");
         boolean result = myScheduleRepository.setBudgetDetail(scheduleId, budgetUpdateVO.getBudgetDetail());
         log.info("일정 예산 수정 - scheduleId={}, userId={}", scheduleId, userId);
         return result;
@@ -176,8 +176,8 @@ public class MyScheduleService {
     public boolean setStartAt(StartAtUpdateVO startAtUpdateVO) {
         String scheduleId = startAtUpdateVO.getScheduleId();
         String userId = startAtUpdateVO.getUserId();
-        if(!isScheduleOwnedByUser(scheduleId, userId))
-            throw new AccessDeniedException("권한이 없습니다");
+        if(!hasWriteSchedulePermission(scheduleId, userId))
+            throw new AccessDeniedException("편집 권한이 없습니다");
         boolean result = myScheduleRepository.setStartAt(startAtUpdateVO);
         log.info("일정 시작일 수정 - scheduleId={}, userId={}", scheduleId, userId);
         return result;
@@ -207,6 +207,20 @@ public class MyScheduleService {
         return  hasPermission;
     }
 
+    private boolean hasWriteSchedulePermission(String scheduleId, String userId) {
+        boolean hasPermission = myScheduleRepository.hasWriteSchedulePermission(scheduleId, userId) > 0;
+        if (!hasPermission) {
+            log.warn("일정 편집 권한 위반 차단 - userId={}, scheduleId={}", userId, scheduleId);
+        }
+        return hasPermission;
+    }
+
+    public String getSchedulePermission(String scheduleId, String userId) {
+        if (!hasReadSchedulePermission(scheduleId, userId))
+            throw new AccessDeniedException("존재하지 않거나 권한이 없습니다");
+        return myScheduleRepository.getSchedulePermission(scheduleId, userId);
+    }
+
     public List<ScheduleSummaryVO> listMyScheduleIdAndTitle(String userId) {
         return myScheduleRepository.listMyScheduleIdAndTitle(userId);
     }
@@ -231,8 +245,8 @@ public class MyScheduleService {
         String scheduleId = visitItemCreateVO.getScheduleId();
         String userId = visitItemCreateVO.getUserId();
         String placeId = visitItemCreateVO.getPlaceId();
-        if(!isScheduleOwnedByUser(scheduleId, userId))
-            throw new AccessDeniedException("권한이 없습니다");
+        if(!hasWriteSchedulePermission(scheduleId, userId))
+            throw new AccessDeniedException("편집 권한이 없습니다");
         boolean result = myScheduleRepository.addVisitItem(visitItemCreateVO.getVisitOrder(), placeId, scheduleId);
         log.info("방문 항목 추가 - scheduleId={}, placeId={}, userId={}", scheduleId, placeId, userId);
         return result;
@@ -242,14 +256,16 @@ public class MyScheduleService {
         String scheduleId = visitItemDeleteVO.getScheduleId();
         String userId = visitItemDeleteVO.getUserId();
         String visitItemId = visitItemDeleteVO.getVisitItemId();
-        if(!isScheduleOwnedByUser(scheduleId, userId))
-            throw new AccessDeniedException("권한이 없습니다");
+        if(!hasWriteSchedulePermission(scheduleId, userId))
+            throw new AccessDeniedException("편집 권한이 없습니다");
         boolean result = myScheduleRepository.deleteVisitItemById(visitItemId);
         log.info("방문 항목 삭제 - scheduleId={}, visitItemId={}, userId={}", scheduleId, visitItemId, userId);
         return result;
     }
     @Transactional
-    public boolean addCompanion(String myScheduleId, String sharedUserId) {
+    public boolean addCompanion(String myScheduleId, String sharedUserId, String userId) {
+        if (!isScheduleOwnedByUser(myScheduleId, userId))
+            throw new AccessDeniedException("권한이 없습니다");
         if (myScheduleRepository.isScheduleOwnedByUser(myScheduleId, sharedUserId) > 0) {
             log.warn("본인 소유 일정 공유 차단 - scheduleId={}, sharedUserId={}", myScheduleId, sharedUserId);
             throw new InvalidInputException("본인이 소유한 일정에는 공유 대상으로 추가할 수 없습니다.");
@@ -322,8 +338,8 @@ public class MyScheduleService {
         String scheduleId = visitOrderUpdateVO.getScheduleId();
         String userId = visitOrderUpdateVO.getUserId();
         List<VisitOrderVO> orders = visitOrderUpdateVO.getOrders();
-        if(!isScheduleOwnedByUser(scheduleId, userId))
-            throw new AccessDeniedException("권한이 없습니다");
+        if(!hasWriteSchedulePermission(scheduleId, userId))
+            throw new AccessDeniedException("편집 권한이 없습니다");
         boolean allUpdated = !orders.isEmpty();
         for (VisitOrderVO order : orders) {
             if (myScheduleRepository.updateVisitItem(

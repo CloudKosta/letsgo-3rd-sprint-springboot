@@ -2,6 +2,7 @@ package com.travel.letsgospringboot.myschedule.controller;
 
 import com.travel.letsgospringboot.common.PageResponse;
 import com.travel.letsgospringboot.myschedule.controller.request.*;
+import com.travel.letsgospringboot.myschedule.controller.response.ScheduleDetailResponse;
 import com.travel.letsgospringboot.myschedule.service.MyScheduleService;
 import com.travel.letsgospringboot.myschedule.vo.*;
 import com.travel.letsgospringboot.auth.AppUserDetails;
@@ -31,6 +32,17 @@ public class MyScheduleRestController {
 
         return myScheduleService.getMyScheduleListPaged(userId, searchRequest.getSearchTitle(),
                 isShared, isSortTitle, page, 12);
+    }
+
+    @GetMapping("/{scheduleId}/detail")
+    public ScheduleDetailResponse getScheduleDetail(@PathVariable String scheduleId,
+                                                    @AuthenticationPrincipal AppUserDetails userDetails) {
+        String userId = userDetails.getUsername();
+        return new ScheduleDetailResponse(
+                myScheduleService.getScheduleDetail(scheduleId, userId),
+                myScheduleService.getScheduleRoute(scheduleId, userId),
+                myScheduleService.getSchedulePermission(scheduleId, userId)
+        );
     }
 
     @PostMapping
@@ -112,8 +124,10 @@ public class MyScheduleRestController {
 
     @PostMapping("/{scheduleId}/companion")
     public boolean addCompanion(@PathVariable String scheduleId,
-                                @RequestBody CompanionRequest companionRequest) {
-        return myScheduleService.addCompanion(scheduleId, companionRequest.getSharedUserId());
+                                @RequestBody CompanionRequest companionRequest,
+                                @AuthenticationPrincipal AppUserDetails userDetails) {
+        return myScheduleService.addCompanion(scheduleId, companionRequest.getSharedUserId(),
+                userDetails.getUsername());
     }
 
     @PutMapping("/{scheduleId}/companion/permission")

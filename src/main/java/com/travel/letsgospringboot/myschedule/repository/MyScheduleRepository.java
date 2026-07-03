@@ -83,6 +83,10 @@ public interface MyScheduleRepository {
 
     int hasReadSchedulePermission(String scheduleId, String userId);
 
+    int hasWriteSchedulePermission(String scheduleId, String userId);
+
+    String getSchedulePermission(String scheduleId, String userId);
+
     // ---- 삽입 ----
     boolean addMySchedule(ScheduleCreateVO scheduleCreateVO);
 
