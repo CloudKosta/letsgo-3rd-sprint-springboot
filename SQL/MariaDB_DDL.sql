@@ -118,18 +118,9 @@ CREATE TABLE visit_item
 ALTER TABLE visit_item
     MODIFY visit_item_id BIGINT NOT NULL AUTO_INCREMENT;
 
-CREATE SEQUENCE seq_schedule_share_user
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 1
-    MAXVALUE 999999
-    CYCLE
-    CACHE 20;
-
-
 CREATE TABLE schedule_share_user
 (
-    share_id       VARCHAR(50)  NOT NULL,
+    share_id       BIGINT       NOT NULL AUTO_INCREMENT,
     permission     VARCHAR(10)  NOT NULL,
     my_schedule_id VARCHAR(50)  NOT NULL,
     shared_user_id VARCHAR(50)  NOT NULL,

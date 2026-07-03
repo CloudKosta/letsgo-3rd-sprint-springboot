@@ -327,8 +327,8 @@
     </insert>
 
     <insert id="addCompanion" parameterType="map">
-        INSERT INTO schedule_share_user (share_id, permission, my_schedule_id, shared_user_id)
-        VALUES (NEXTVAL(seq_schedule_share_user), 'R', #{myScheduleId}, #{sharedUserId})
+        INSERT INTO schedule_share_user (permission, my_schedule_id, shared_user_id)
+        VALUES ('R', #{myScheduleId}, #{sharedUserId})
     </insert>
 
     <update id="markScheduleShared" parameterType="String">
