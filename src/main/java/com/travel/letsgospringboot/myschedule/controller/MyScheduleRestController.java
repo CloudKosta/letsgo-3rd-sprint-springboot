@@ -182,4 +182,10 @@ public class MyScheduleRestController {
         return myScheduleService.getMapSchedule(scheduleId, userDetails.getUsername());
     }
 
+    @DeleteMapping("/{scheduleId}/leave")
+    public boolean leaveSharedSchedule(@PathVariable String scheduleId,
+                                       @AuthenticationPrincipal AppUserDetails userDetails) {
+        return myScheduleService.leaveSharedSchedule(scheduleId, userDetails.getUsername());
+    }
+
 }

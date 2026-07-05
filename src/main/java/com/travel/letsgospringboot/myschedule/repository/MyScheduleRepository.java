@@ -94,6 +94,8 @@ public interface MyScheduleRepository {
 
     boolean addCompanion(String myScheduleId, String sharedUserId);
 
+    boolean leaveSharedSchedule(String scheduleId, String userId);
+
     int shareToPostInsert(ShareVO shareVO);
 
     int shareVisitItemsToPost(String myScheduleId);

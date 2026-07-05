@@ -331,6 +331,12 @@
         VALUES ('R', #{myScheduleId}, #{sharedUserId})
     </insert>
 
+    <delete id="leaveSharedSchedule" parameterType="map">
+        DELETE FROM schedule_share_user
+        WHERE my_schedule_id = #{scheduleId}
+          AND shared_user_id = #{userId}
+    </delete>
+
     <update id="markScheduleShared" parameterType="String">
         UPDATE my_schedule
         SET is_shared = 1

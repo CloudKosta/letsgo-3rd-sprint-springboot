@@ -275,6 +275,16 @@ public class MyScheduleService {
         log.info("동행자 추가 - scheduleId={}, sharedUserId={}", myScheduleId, sharedUserId);
         return result;
     }
+
+    @Transactional
+    public boolean leaveSharedSchedule(String scheduleId, String userId) {
+        // 소유자는 나갈 수 없음(본인 일정). 공유받은 사용자만 자신의 공유를 해제한다.
+        if (myScheduleRepository.isScheduleOwnedByUser(scheduleId, userId) > 0)
+            throw new AccessDeniedException("소유한 일정은 나갈 수 없습니다");
+        boolean result = myScheduleRepository.leaveSharedSchedule(scheduleId, userId);
+        log.info("공유 일정 나가기 - scheduleId={}, userId={}", scheduleId, userId);
+        return result;
+    }
     @Transactional
     public boolean setCompanionPermission(CompanionPermissionVO companionPermissionVO) {
         String scheduleId = companionPermissionVO.getScheduleId();

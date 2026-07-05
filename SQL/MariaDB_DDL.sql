@@ -61,7 +61,7 @@ CREATE TABLE my_schedule
     is_shared      TINYINT(1)   DEFAULT 0,
     user_id        VARCHAR(50)  NOT NULL,
     CONSTRAINT pk_my_schedule PRIMARY KEY (my_schedule_id)
-#     CONSTRAINT fk_schedule_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
+        #     CONSTRAINT fk_schedule_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 CREATE SEQUENCE seq_schedule_post
@@ -85,7 +85,7 @@ CREATE TABLE schedule_post
     is_hidden      TINYINT(1)   NOT NULL DEFAULT 0,
     user_id        VARCHAR(50)  NOT NULL,
     CONSTRAINT pk_schedule_post PRIMARY KEY (post_id)
-#     CONSTRAINT fk_post_user FOREIGN KEY (user_id) REFERENCES users (user_id)
+        #     CONSTRAINT fk_post_user FOREIGN KEY (user_id) REFERENCES users (user_id)
 ) DEFAULT CHARSET=utf8mb4;
 
 
@@ -126,7 +126,7 @@ CREATE TABLE schedule_share_user
     shared_user_id VARCHAR(50)  NOT NULL,
     CONSTRAINT pk_schedule_share_user PRIMARY KEY (share_id),
     CONSTRAINT fk_share_schedule FOREIGN KEY (my_schedule_id) REFERENCES my_schedule (my_schedule_id) ON DELETE CASCADE
-#     CONSTRAINT fk_share_user FOREIGN KEY (shared_user_id) REFERENCES users (user_id) ON DELETE CASCADE
+        #     CONSTRAINT fk_share_user FOREIGN KEY (shared_user_id) REFERENCES users (user_id) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 # ALTER TABLE schedule_share_user DROP FOREIGN KEY fk_share_user;
