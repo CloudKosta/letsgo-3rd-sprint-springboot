@@ -41,10 +41,11 @@ public class PlaceRestController {
                               @RequestParam(value = "category", required = false) String category,
                               @RequestParam(value = "keyword", required = false) String keyword,
                               @RequestParam(value = "sortOrder", defaultValue = "distance") String sortOrder,
-                              @RequestParam(value = "page", defaultValue = "1") int page) {
+                              @RequestParam(value = "page", defaultValue = "1") int page,
+                              @RequestParam(value = "size", defaultValue = "12") int size) {
 
         String sortBy = "popular".equalsIgnoreCase(sortOrder) ? "like" : "title";
-        PageResponse<PlaceVO> leisure = placeService.getPlaceListPaged("LEISURE", category, keyword, sortBy, page, 12);
+        PageResponse<PlaceVO> leisure = placeService.getPlaceListPaged("LEISURE", category, keyword, sortBy, page, size);
         return leisure;
     }
 
@@ -53,10 +54,11 @@ public class PlaceRestController {
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "sortOrder", defaultValue = "name") String sortOrder,
-            @RequestParam(value = "page", defaultValue = "1") int page) {
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "12") int size) {
 
         String sortBy = "popular".equalsIgnoreCase(sortOrder) ? "like" : "title";
-        return placeService.getPlaceListPaged("RESTAURANT", category, keyword, sortBy, page, 12);
+        return placeService.getPlaceListPaged("RESTAURANT", category, keyword, sortBy, page, size);
     }
 
     @GetMapping("/list/stay")
@@ -64,10 +66,11 @@ public class PlaceRestController {
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "sortOrder", defaultValue = "name") String sortOrder,
-            @RequestParam(value = "page", defaultValue = "1") int page) {
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "12") int size) {
 
         String sortBy = "popular".equalsIgnoreCase(sortOrder) ? "like" : "title";
-        return placeService.getPlaceListPaged("STAY", category, keyword, sortBy, page, 12);
+        return placeService.getPlaceListPaged("STAY", category, keyword, sortBy, page, size);
     }
 
     @PostMapping("/placeLikeAjax")
